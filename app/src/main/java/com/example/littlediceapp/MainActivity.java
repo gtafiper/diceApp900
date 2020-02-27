@@ -4,13 +4,13 @@ package com.example.littlediceapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,11 +35,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //ExpandableListView expandableListView;
     private Random random = new Random();
     int turn = 0;
-    ArrayList<Integer> listGroup = new ArrayList<>();
+    public ArrayList<Integer> listGroup = new ArrayList<>();
     HashMap<String, ArrayList<Integer>> listItem = new HashMap<>();
     TextView closeToTop;
-    LinearLayout logHolder;
     EditText numDice;
+    public Button goToLogBt;
 
 
     @Override
@@ -50,9 +50,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button buttonAdd = findViewById(R.id.btAddDice);
         buttonAdd.setOnClickListener(this);
         buttonRoll.setOnClickListener(this);
+
         closeToTop = findViewById(R.id.closeToTp);
-        logHolder = findViewById(R.id.logHolder);
         numDice = findViewById(R.id.etNumOfDice);
+
+        goToLogBt = findViewById(R.id.btLog);
+        goToLogBt.setOnClickListener(this);
 
         //expandableListView = findViewById(R.id.exList);
         //adapter = new ExspanListAdapter(this,listGroup,listItem);
@@ -98,16 +101,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+
             case R.id.btAddDice:
                 addDice();
                 break;
+
             case R.id.btRoll:
                 roll();
+                break;
 
+            case R.id.btLog:
+                goToLog();
+                break;
 
         }
 
     }
+
+    public void goToLog(){
+       Intent intent = new Intent(MainActivity.this, LogView.class);
+        Bundle bundle = new Bundle();
+        bundle.putIntegerArrayList("key", listGroup);
+
+        intent.putExtras(bundle);
+       startActivity(intent);
+
+    }
+
 
     private void roll(){
         turn++;
@@ -143,27 +163,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
-        TextView textView = new TextView(this);
-
-        logHolder.addView(textView);
-        if(turn > 5 ){
-            logHolder.removeAllViews();
-            turn = 0;
-        }
 
         listItem.put(round, listGroup);
 
-        textView.setText(listItem.toString());
+        //textView.setText(listItem.toString());
         Context context = getApplicationContext();
 
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, listItem.toString(), duration);
         toast.show();
-        listItem.clear();
-        listGroup.clear();
+        //listItem.clear();
         //adapter.notifyDataSetChanged();
 
     }
+
+
+
 
 
 
